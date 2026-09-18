@@ -5,8 +5,11 @@
 **Plant / code:** `D:\PNEUMATIC project v1` (`hmi_demo`)  
 **Live HMI:** `http://127.0.0.1:4173/`  
 **Grounding snapshot:** `GET http://127.0.0.1:4173/api/grok/snapshot`  
-**capturedAt:** `2026-09-18T19:23:38.601Z`  
-**Fidelity:** `engineering` · **demoAssist live:** `0 N·m` · **Plant status:** `ready`  
+**capturedAt:** `2026-09-18T19:23:45.567Z`  
+**Fidelity:** `engineering` · **demoAssist live:** `0 N·m` · **Plant status:** `running`  
+
+
+> **Grounding file (Dina):** `C:\Users\Nizar\AppData\Local\Temp\kpp_snap_out.txt` — outer `capturedAt` `2026-09-18T19:23:45.568Z`, snapshot `2026-09-18T19:23:45.567Z` (RUNNING, engineering, receiverSP=8, injReq=1.9, demoAssist=0).
 
 > Every numeric claim below is taken from that snapshot’s live tags and/or `designBasis` / `designBasisAdvice` / `designBasisWarnings`. No invented plant constants.
 
@@ -19,6 +22,35 @@ KPP-01’s HMI simulator integrates open-cycle pneumatic injection, hydrostatic 
 **Keywords:** buoyancy; open-cycle pneumatics; Boyle/polytropic floater gas; hydrostatic injection; throttle loss; energy balance; KPP-01 simulator
 
 ---
+
+
+## 0. Grounding snapshot (authoritative)
+
+Source file: `C:\Users\Nizar\AppData\Local\Temp\kpp_snap_out.txt`  
+`snapshot.capturedAt = 2026-09-18T19:23:45.567Z` · status=`running` · fidelity=`engineering`
+
+| Symbol / tag | Value | Role in equations |
+|--------------|-------|-------------------|
+| $P_{rec}$ `setpoints.receiverBara` | **8** bara | compressor cut-out |
+| $P_{reg}$ `setpoints.regulatorBara` | **2.3** bara | header setpoint |
+| $P_{dock}$ `injection.requiredBara` / `designBasis.injectionPressureBara` | **1.9** / **1.9** bara | hydrostatic fill head |
+| $\tau_b$ `torqueNm.buoyancy` | **7856.1** N·m | buoyant drive |
+| $\tau_{\mathrm{assist}}$ `torqueNm.demoAssist` | **0** N·m | **must stay 0 in eng.** |
+| $n_{\mathrm{tw}}$ `towerRPM` | **2.755** rpm | $\omega=2\pi n/60$ |
+| $P_{\mathrm{gen}}$ `deliveredKW` | **1.817** kW | live electrical |
+| $P_{\mathrm{gen,des}}$ `designElectricalKW` | **2.586** kW | air-limited design |
+| $P_{\mathrm{comp,des}}$ `compressorPowerKW` | **15.843** kW | design compression |
+| $P_{\mathrm{net,des}}$ `netPlantPowerKW` | **-13.257** kW | $P_{gen}-P_{comp}$ |
+| nameplate `ratedKW` | **8** kW | **not** delivered |
+| gear `liveRatio` | **108.9** | $\omega_g \approx i\,\omega$ |
+| air mass injected/vented | **127.81 / 126.237** kg | open-cycle balance |
+
+Throttle fraction from designBasis warning (8 bar vs 1.90 bara):
+
+$$
+\frac{15.843-4.89}{15.843} \approx 0.691 \ (69\%)
+$$
+
 
 ## 1. What the plant is
 
@@ -82,7 +114,7 @@ Code: `ambientPressureAt(depthM, atmBara)` and `pressureAtDepth(depthM)` in `Con
 | Quantity | Value | Source |
 |----------|-------|--------|
 | `designBasis.injectionPressureBara` | **1.9** | designBasis |
-| Live `pneumatic.injection.requiredBara` (ready/idle dock) | **1.0** (no active deep fill demand this frame) | live |
+| Live `pneumatic.injection.requiredBara` (RUNNING) | **1.9** (no active deep fill demand this frame) | live |
 | Implied dock depth at 1.9 bara if \(P_{\mathrm{atm}}=1\) | \(h=(1.9-1)/0.1=9\) m | derived |
 
 **Physics truth for running fill:** designBasis injection head is **1.90 bara**.
@@ -125,7 +157,7 @@ V = V_{\mathrm{ref}}\left(\frac{P_{\mathrm{ref}}}{P}\right)^{1/n}
 
 | Tag | Value |
 |-----|-------|
-| `mechanical.floaters.airMassKg` | **2.156 kg** |
+| `accounting` injected/vented | **127.81 / 126.237 kg** |
 | `pneumatic.accounting.injectedKg` | **2.156 kg** |
 | `ventedKg` / `recoveredKg` | **0 / 0** (plant ready; no active lap vent this frame) |
 
@@ -166,7 +198,7 @@ with **\(\tau_{\mathrm{assist}}=\texttt{demoAssist}\)** — **not buoyancy**.
 
 | Quantity | Value | Source |
 |----------|-------|--------|
-| Live `torqueNm.buoyancy` | **10779.7 N·m** | snapshot |
+| Live `torqueNm.buoyancy` | **7856.1 N·m** | snapshot |
 | Live `torqueNm.demoAssist` | **0 N·m** | snapshot |
 | `designBasis.designTorqueNm` | **10796.809 N·m** | designBasis |
 | `designBasis.demoAssistTorqueNm` | **17841.538 N·m** | **what-if only** — not live eng torque |
@@ -218,8 +250,8 @@ v_{\mathrm{chain}} = \omega \cdot r_{\mathrm{sprocket}}
 |----------|-------|--------|
 | `setpoints.receiverBara` | **8** | live |
 | `setpoints.regulatorBara` | **2.3** | live |
-| `sensors.ptTankBara` | **5.175** | live |
-| `sensors.ptHeaderBara` | **2.306** | live |
+| `sensors.ptTankBara` | **6.936** | live |
+| `sensors.ptHeaderBara` | **2.095** | live |
 | Compressor FAD | **3.2 m³/min** | live + designBasis |
 | `designBasis.airDemandM3Min` | **3.2** | designBasis |
 | `designBasis.compressorPowerKW` | **15.843** | designBasis |
@@ -281,7 +313,7 @@ On a long engineering run, throttle and compression dominate `in − out`, consi
 | `electrical.generator.ratedKW` | **8** | live |
 | `designBasis.designElectricalKW` | **2.586** | designBasis |
 | `electrical.generator.loadRequestKW` | **2.6** | live |
-| Live delivered (ready) | **0** | tower stopped |
+| Live delivered (RUNNING) | **1.817 kW** | tower stopped |
 
 Advice: *“An 8 kW generator at this torque needs about 9.90 m³/min FAD… selected compressor delivers 3.20 m³/min, which supports 2.59 kW.”*
 
@@ -302,7 +334,7 @@ P_{\mathrm{net}} = P_{\mathrm{gen}} - P_{\mathrm{comp}}
 | Basis | \(P_{\mathrm{gen}}\) | \(P_{\mathrm{comp}}\) | \(P_{\mathrm{net}}\) |
 |-------|----------------------|------------------------|------------------------|
 | designBasis | 2.586 kW | 15.843 kW | **−13.257 kW** |
-| live plantPower (this frame) | 0 | 12.27 kW | **−12.271 kW** |
+| live plantPower (this frame; compressor coasting) | 1.817 | 0 kW | **1.817 kW** |
 
 designBasisWarnings: *“Design-basis net plant power is -13.26 kW (2.59 kW generated vs 15.84 kW of compression).”*
 
@@ -380,7 +412,7 @@ Loop geometry this basis: `loopLengthM = 21.705`, `floaterPitchM = 0.748`, `N = 
 
 ## 14. Data citation
 
-- Snapshot: `capturedAt = 2026-09-18T19:23:38.601Z` via `GET http://127.0.0.1:4173/api/grok/snapshot`  
+- Snapshot: `capturedAt = 2026-09-18T19:23:45.567Z` via `GET http://127.0.0.1:4173/api/grok/snapshot`  
 - Blocks used: `plant`, `pneumatic`, `mechanical.torqueNm`, `electrical`, `energyKWh`, `designBasis`, `designBasisAdvice`, `designBasisWarnings`  
 - Code references: `hmi_demo/js/utils/FloaterPhysics.js`, `Config.js` (`pressureAtDepth`, `WATER_DENSITY`), `models/TowerDynamics.js` (`updateDynamics`)  
 - Author actions: **read-only**; no plant START/STOP/setpoint writes for this document.
