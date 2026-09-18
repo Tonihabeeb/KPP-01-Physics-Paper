@@ -1,9 +1,12 @@
-# KPP-01 Physics Scientific Paper
+﻿# KPP-01 Physics Paper
 
-Omar — KPP-01 Physicist / Scientific Lead
+Scientist-grade governing physics for the **KPP-01 buoyancy pneumatic DEMO SIMULATOR**.
 
-## Download / read on phone
-- **Markdown (GitHub):** https://github.com/Tonihabeeb/KPP-01-Physics-Paper/blob/main/KPP-01_Physics_Scientific_Paper.md
-- **Raw download:** https://raw.githubusercontent.com/Tonihabeeb/KPP-01-Physics-Paper/main/KPP-01_Physics_Scientific_Paper.md
+- Paper: [KPP-01_Physics_Scientific_Paper.md](./KPP-01_Physics_Scientific_Paper.md)
+- Simulator-titled copy: [KPP-01_Simulator_Physics_Paper.md](./KPP-01_Simulator_Physics_Paper.md)
+- PDF: [KPP-01_Simulator_Physics_Paper.pdf](./KPP-01_Simulator_Physics_Paper.pdf)
+- Grounding: live `GET http://127.0.0.1:4173/api/grok/snapshot` (`capturedAt` cited in paper)
+- Author: Omar (KPP-01 Physicist)
+- Local DEEP_PC: `D:\PNEUMATIC project v1\docs\KPP-01_Simulator_Physics_Paper.pdf`
 
-PDF copy also lives on DEEP_PC at `D:\\PNEUMATIC project v1\\docs\\KPP-01_Physics_Scientific_Paper.pdf` and in Grok chat when attached.
+Replaces the prior thin draft with governing equations, energy balance, hydrostatics, and per-tick simulator updates.
